@@ -1,0 +1,62 @@
+{
+  "Beef Burger": {
+      "title": "Beef Burger",
+      "price": 14.99,
+      "image": "assets/home_img.png"
+  },
+  "Mac 'n' Cheese": {
+      "title": "Mac 'n' Cheese",
+      "price": 4.99,
+      "image": "assets/macncheese.png"
+  },
+  "Wedges": {
+      "title": "Wedges",
+      "price": 4.99,
+      "image": "assets/wedges.png"
+  },
+  "Latte": {
+      "title": "Latte",
+      "price": 3.99,
+      "image": "assets/latte.png"
+  },
+  "Hotdog": {
+      "title": "Hotdog",
+      "price": 4.49,
+      "image": "assets/hotdog.png"
+  },
+  "Chicken Katsu": {
+    "title": "Chicken Katsu",
+    "price": 6.99,
+    "image": "assets/chickenkatsu.png"
+  },
+  "Bundaberg": {
+  "title": "Bundaberg",
+  "price": 4.99,
+  "image": "assets/bundaberg.png"
+  },
+  "Lipton": {
+    "title": "Lipton",
+    "price": 3.19,
+    "image": "assets/lipton.png"
+  },
+  "Coke": {
+    "title": "Coke",
+    "price": 1.99,
+    "image": "assets/coke.png"
+  },
+  "Garden Salad": {
+    "title": "Garden Salad",
+    "price": 3.49,
+    "image": "assets/gardensalad.png"
+  },
+  "Nuggets": {
+    "title": "Chicken Nuggets",
+    "price": 3.99,
+    "image": "assets/nuggets.png"
+  },
+  "Cookie": {
+    "title": "Cookie",
+    "price": 1.99,
+    "image": "assets/cookies.png"
+  }
+}

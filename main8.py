@@ -3,7 +3,7 @@
 # modules
 from tkinter import *
 from PIL import Image, ImageTk
-import json
+import os
 
 
 # supporting functions
@@ -49,47 +49,6 @@ class Num:
 
 
 # data encapsulation classes
-class MenuItem:
-    """an object class that stores/represents the information of a menu item"""
-    def __init__(self, title, image, price):
-        self.title = title
-        self.image = image
-        self.price = price
-
-
-class Menu:
-    """a data class that compiles the information of each menu item"""
-    def __init__(self):
-        # initialising menu file
-        file = open("menu.json")
-        self.DATA = json.load(file)
-
-        # categorised menus
-        self.FAV = [self.call("Beef Burger"), self.call("Mac 'n' Cheese"), self.call("Wedges"), self.call("Latte")]
-        self.MAIN = [self.call("Beef Burger"), self.call("Mac 'n' Cheese"), self.call("Hotdog"), self.call("Chicken Katsu")]
-        self.SIDES = [self.call("Wedges"), self.call("Nuggets"), self.call("Garden Salad"), self.call("Cookie")]
-        self.DRINK = [self.call("Coke"), self.call("Lipton"), self.call("Bundaberg"), self.call("Latte")]
-
-    def call(self, item):
-        return MenuItem(self.DATA[item]["title"], self.DATA[item]["image"], self.DATA[item]["price"])
-
-    def get(self):
-        return dict(self.DATA).copy()
-
-    # categorised menu returning methods
-    def fav_get(self):
-        return self.FAV.copy()
-
-    def main_get(self):
-        return self.MAIN.copy()
-
-    def sides_get(self):
-        return self.SIDES.copy()
-
-    def drink_get(self):
-        return self.DRINK.copy()
-
-
 class Order:
     """encapsulates a customers order into a single object"""
 
@@ -100,6 +59,7 @@ class Order:
 
 class OrderData:
     """encapsulates all the customers order"""
+
     def __init__(self):
         self.orders = []
 
@@ -107,28 +67,22 @@ class OrderData:
 # supporting GUI class
 class QuantityButton:
     """creates a scroll frame containing buttons that can flip through pages"""
-    def __init__(self, master, typeface, size, width, func1, func2, var, bg):
+    def __init__(self, master, typeface, size, width, func1, func2, var):
         # initialising variables
         self.var = var
         self.func2 = func2
         if func1 == 'self.add':
             self.func1 = self.add
-        else:
-            func1 = self._null
         if func2 is None:
             self.func2 = self._null
 
         # initialising widgets
-        self.main = Frame(master, height=size, bg=bg)
+        self.main = Frame(master, height=size, bg='white')
         self.l_btn = Button(self.main, text='<', font=typeface, height=size, width=size, bg='light gray',
                             command=lambda: [self.func1(-1), self.func2()], state=DISABLED)
         self.n_lbl = Label(self.main, textvariable=var, font=typeface, height=size, width=width, bg='light gray')
         self.r_btn = Button(self.main, text='>', font=typeface, height=size, width=size, bg='light gray',
                             command=lambda: [self.func1(1), self.func2()])
-
-        # state check
-        if var.get() >= 1:
-            self.l_btn.configure(state=ACTIVE)
 
         # gridding onto frame
         self.l_btn.grid(row=0, column=0, padx=5, sticky=W)
@@ -181,36 +135,50 @@ class CategoryButton:
         return self.category
 
 
-class OrderItemCard:
-    """creates cards of ordered items"""
-    def __init__(self, master, font1, font2, item):
-        # initialising menu data/variables
-        self.DATA = Menu().get()
-        self.n = IntVar()
-        self.n.set(item[1])
+class Menu:
+    """a data class that compiles the information of each menu item"""
 
-        # initialising widgets
-        self.main = Frame(master, bg='pink')
-        image = getImage(self.main, 'white', self.DATA[item[0]]['image'], (80, 80))
-        title = Label(self.main, text=item[0], bg='white', font=font1)
-        price = Label(self.main, text=f"${self.DATA[item[0]]['price']}", bg='white', font=font1)
-        card_spacer = Label(self.main, bg='red')
-        quantity_btn = QuantityButton(self.main, typeface=font2, size=1, width=1, func1='self.add', func2=self.change, var=self.n, bg='white')
+    def __init__(self):
+        # all menu items
+        BEEF_BURGER = MenuItem("Beef Burger", "assets/home_img.png", "14.99")
+        MACNCHEESE = MenuItem("Mac 'n' Cheese", "assets/macncheese.png", "5.99")
+        WEDGES = MenuItem("Wedges", "assets/wedges.png", "4.99")
+        LATTE = MenuItem("Latte", "assets/latte.png", "3.99")
+        HOTDOG = MenuItem("Hotdog", "assets/hotdog.png", "4.49")
+        KATSU = MenuItem("Katsu Chicken", "assets/chickenkatsu.png", "6.99")
+        COOKIE = MenuItem("Cookie", "assets/cookies.png", "1.99")
+        NUGGETS = MenuItem("Chicken Nuggets", "assets/nuggets.png", "3.99")
+        SALAD = MenuItem("Garden Salad", "assets/gardensalad.png", "3.49")
+        COKE = MenuItem("Coke", "assets/coke.png", "1.99")
+        LIPTON = MenuItem("Lipton", "assets/lipton.png", "3.19")
+        BUNDABERG = MenuItem("Bundaberg", "assets/bundaberg.png", "4.99")
 
-        # widget gridding
-        image.grid(row=0, column=0, rowspan=2, padx=15, sticky=W)
-        title.grid(row=0, column=1, sticky=W)
-        price.grid(row=1, column=1, sticky=W)
-        quantity_btn.get_main().grid(row=0, column=3, rowspan=2, padx=15, sticky=E)
-        card_spacer.grid(row=3, column=0, columnspan=4, padx=255)
+        # categorised menus
+        self.fav_menu = [BEEF_BURGER, MACNCHEESE, WEDGES, LATTE]
+        self.main_menu = [BEEF_BURGER, MACNCHEESE, HOTDOG, KATSU]
+        self.sides_menu = [WEDGES, NUGGETS, SALAD, COOKIE]
+        self.drink_menu = [COKE, LIPTON, BUNDABERG, LATTE]
 
-    def get_main(self):
-        """returns the main frame widget"""
-        return self.main
+    # categorised menu returning methods
+    def fav_get(self):
+        return self.fav_menu.copy()
 
-    def change(self):
-        """changes the price and the button widget if the quantity is less than 1"""
-        pass
+    def main_get(self):
+        return self.main_menu.copy()
+
+    def sides_get(self):
+        return self.sides_menu.copy()
+
+    def drink_get(self):
+        return self.drink_menu.copy()
+
+
+class MenuItem:
+    """an object class that stores/represents the information of a menu item"""
+    def __init__(self, title, image, price):
+        self.title = title
+        self.image = image
+        self.price = price
 
 
 # main GUI class
@@ -227,7 +195,6 @@ class CustomerGUI:
         self.SMALL_FONT1 = ("Lato", 24)
         self.SMALL_FONT2 = ("Lato", 15)
         self.SMALL_FONT3 = ("Lato", 18)
-        self.SMALL_FONT4 = ("Lato", 14)
         self.TINY_FONT = ("Lato", 10)
 
         # initialising menu data
@@ -309,7 +276,7 @@ class CustomerGUI:
         chkt_sub2_lbl.grid(row=0, column=1, ipadx=25, padx=60)
 
         self.chkt_wid.append(chkt_subtitle_f)
-        self.chkt_wid.append(QuantityButton(self.top_f, typeface=self.SMALL_FONT2, size=1, width=1, func1='self.add', func2=None, var=self.chkt_n, bg='black').get_main())
+        self.chkt_wid.append(QuantityButton(self.top_f, typeface=self.SMALL_FONT2, size=15, width=15, func1='self.add', func2=None, var=self.chkt_n))
         self.chkt_wid.append(getImage(self.top_f, 'black', 'assets/line2.png', (620, 10)))
         self.chkt_price = Label(self.top_f, bg='white', text="Total Price: $", font=self.SMALL_FONT)
 
@@ -451,59 +418,17 @@ class CustomerGUI:
         else:
             self.green_btn.configure(state=DISABLED)
 
+
     def checkout_screen(self):
         """displays the checkout screen"""
         # widget configuring
         self.forget_screen(self.menu_wid)
-
-        # initialising organised order cards
-        cards = self.create_order()
         self.top_f.configure(bg='black')
-
-        # initialising other widgets
-        spacer = False
-        spacing_lbl = Label(self.top_f, bg='black')
 
         # widget gridding
         n = Num()
         for wid in self.chkt_wid[0:2]:
             wid.grid(row=n.rcall())
-        for wid in cards[0:4]:
-            wid.grid(row=n.rcall(), pady=10)
-        if len(cards) < 4:
-            spacer = True
-            spacing_lbl.grid(row=n.rcall(), pady=56*(4-len(cards)))
-        for wid in self.chkt_wid[2:]:
-            wid.grid(row=n.rcall(), pady=10)
-
-        total_price = 0
-        for item in self.organise_order():
-            total_price += item[1]*self.ALL_MENU.get()[item[0]]['price']
-        self.chkt_price.configure(text=f"Total Price: ${total_price}")
-
-    def chkt_pagebtn_init(self):
-        pass
-
-    def organise_order(self):
-        """organises the current order list"""
-        organised_order = []
-        items = []
-        for item in self.current_order:
-            if item[0] in items:
-                for i in organised_order:
-                    if item[0] == i[0]:
-                        organised_order[organised_order.index(i)][1] += item[1]
-            else:
-                organised_order.append(item)
-                items.append(item[0])
-        return organised_order
-
-    def create_order(self):
-        """creates a list of OrderItemCard's"""
-        cards = []
-        for order in self.organise_order():
-            cards.append(OrderItemCard(self.top_f, font1=self.SMALL_FONT4, font2=self.TINY_FONT, item=order).get_main())
-        return cards
 
     # methods for toplevel displays
     def order_popup(self, event, item):
@@ -515,7 +440,7 @@ class CustomerGUI:
             if cancel:
                 order_wn.destroy()
             else:
-                self.current_order.append([item.title, n.get()])
+                self.current_order.append((item.title, n.get()))
                 self.checkout_state()
                 order_wn.destroy()
 
@@ -550,7 +475,7 @@ class CustomerGUI:
         quantity_lbl = Label(f1, text="Quantity", font=self.SMALL_FONT3, bg='white', borderwidth=1, relief=GROOVE,
                              padx=25, pady=5)
         quantity_btn = QuantityButton(f1, typeface=self.SMALL_FONT2, size=1, width=10, func1='self.add',
-                                      func2=add_btn_state, var=n, bg='white')
+                                      func2=add_btn_state, var=n)
         cancel_btn = Button(f2, text='Cancel', font=self.SMALL_FONT3, bg='red', fg='white', borderwidth=1,
                             relief=GROOVE, command=lambda: order_toplevel_destroy(True))
         add_btn = Button(f2, text='Add', font=self.SMALL_FONT3, bg='green', fg='white', borderwidth=1, relief=GROOVE,
@@ -616,7 +541,6 @@ class CustomerGUI:
 
         # run
         cancel_wn.grab_set()
-
 
 
 # mainloop and main window adjustments

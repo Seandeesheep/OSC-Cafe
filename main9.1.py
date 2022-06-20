@@ -212,7 +212,6 @@ class OrderItemCard:
         """changes the price and the button widget if the quantity is less than 1"""
         pass
 
-
 # main GUI class
 class CustomerGUI:
     """this class runs the interface for customers to allow them to view, process, and purchase their order.
@@ -460,19 +459,12 @@ class CustomerGUI:
         cards = self.create_order()
         self.top_f.configure(bg='black')
 
-        # initialising other widgets
-        spacer = False
-        spacing_lbl = Label(self.top_f, bg='black')
-
         # widget gridding
         n = Num()
         for wid in self.chkt_wid[0:2]:
             wid.grid(row=n.rcall())
         for wid in cards[0:4]:
             wid.grid(row=n.rcall(), pady=10)
-        if len(cards) < 4:
-            spacer = True
-            spacing_lbl.grid(row=n.rcall(), pady=56*(4-len(cards)))
         for wid in self.chkt_wid[2:]:
             wid.grid(row=n.rcall(), pady=10)
 
@@ -480,9 +472,6 @@ class CustomerGUI:
         for item in self.organise_order():
             total_price += item[1]*self.ALL_MENU.get()[item[0]]['price']
         self.chkt_price.configure(text=f"Total Price: ${total_price}")
-
-    def chkt_pagebtn_init(self):
-        pass
 
     def organise_order(self):
         """organises the current order list"""

@@ -1,4 +1,4 @@
-# 08/06/22
+# 07/06/22
 
 # modules
 from tkinter import *
@@ -34,7 +34,6 @@ class Num:
 class CustomerGUI:
     """this class runs the interface for customers to allow them to view, process, and purchase their order.
     the processed order will be transferred and stored in a separate file"""
-
     def __init__(self, parent):
         # initialising fonts and images
         BIG_FONT = ("Lato", 95, "bold")
@@ -42,10 +41,8 @@ class CustomerGUI:
         SMALL_FONT = ("Lato", 26, "bold")
         self.TINY_FONT = ("Lato", 14)
 
-        # initialising menu data
-        self.ALL_MENU = Menu()
-        self.FAV_ITEMS = self.ALL_MENU.fav_get()
-        self.current_menu_cards = []
+        # initialising data
+
 
         # initialing main variables
         self.screen = ""
@@ -80,18 +77,29 @@ class CustomerGUI:
         # screen initialisation
         self.home_screen()
 
-    @staticmethod
-    def forget_screen(widgets):
-        """forgets all the widgets on the window given the list of widgets"""
-        for wid in widgets:
-            wid.grid_forget()
-
     def start(self, event):
         """resets/configures the windows widget and starts a new screen according to the current screen"""
         if self.screen == 'home':
             self.forget_screen(self.home_wid)
             self.screen = 'menu_fav'
             self.menu_screen()
+
+    def forget_screen(self, widgets):
+        """forgets all the widgets on the window given the list of widgets"""
+        for wid in widgets:
+            wid.grid_forget()
+
+    def home_screen(self):
+        """grids all the home screen widgets"""
+        self.screen = 'home'
+        n = Num()
+        for wid in self.home_wid[0:2]:
+            wid.bind('<Button-1>', self.start)
+            wid.grid(row=n.call(), ipadx=65, sticky=NSEW)
+        n.reset()
+        for wid in self.home_wid[2:]:
+            wid.bind('<Button-1>', self.start)
+            wid.grid(row=0, column=n.call(), ipadx=20)
 
     def card(self, img, title, price):
         """creates menu item cards"""
@@ -102,69 +110,20 @@ class CustomerGUI:
         image.grid(row=0)
         title_label.grid(row=1, sticky=W)
         price_label.grid(row=2, sticky=W)
-        return card_frame
 
-    def card_menu(self, menu):
-        """creates a list of item cards"""
-        cards = []
-        for item in menu:
-            cards.append(self.card(item.image, item.title, item.price))
-
-
-    def home_screen(self):
-        """grids all the home screen widgets"""
-        self.screen = 'home'
-        n = Num()
-        for wid in self.home_wid[0:2]:
-            wid.bind('<Button-1>', self.start)
-            wid.grid(row=n.call(), ipadx=66, sticky=NSEW)
-        n.reset()
-        for wid in self.home_wid[2:]:
-            wid.bind('<Button-1>', self.start)
-            wid.grid(row=0, column=n.call(), ipadx=20)
 
     def menu_screen(self):
-        """creates a menu screen"""
         n = Num()
-        # initialising main frames and layout
         self.menu_wid.append(self.menu_f1)
         self.menu_f1.grid(row=0, column=n.call())
         self.menu_line.grid(row=0, column=n.call())
         self.menu_f2.grid(row=0, column=n.call())
-
-        # create menu grids
         self.menu_title.grid(row=0, column=0, columnspan=2)
-
-
-class Menu:
-    """a data class that compiles the information of each menu item"""
-    def __init__(self):
-        # all menu items
-        BEEF_BURGER = MenuItem("Beef Burger", "assets/home_img.png", "14.99")
-        MACNCHEESE = MenuItem("Mac 'n' Cheese", "assets/macncheese.png", "5.99")
-        WEDGES = MenuItem("Wedges", "assets/wedges.png", "4.99")
-        LATTE = MenuItem("Latte", "assets/latte.png", "3.99")
-
-        # categorised menus
-        self.fav_menu = [BEEF_BURGER, MACNCHEESE, WEDGES, LATTE]
-
-    # categorised menu returning methods
-    def fav_get(self):
-        return self.fav_menu.copy()
-
-
-class MenuItem:
-    """an object class that stores/represents the information of a menu item"""
-    def __init__(self, title, image, price):
-        self.title = title
-        self.image = image
-        self.price = price
-
 
 
 # mainloop
 root = Tk()
 CustomerGUI(root)
 root.title("OSC Cafe")
-root.resizable(False, False)
+root.resizable(0,0)
 root.mainloop()
